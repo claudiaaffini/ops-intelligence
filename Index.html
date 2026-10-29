@@ -1,0 +1,1165 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ops Intelligence</title>
+
+  <style>
+    :root {
+      --azul: #2563eb;
+      --azul-escuro: #1d4ed8;
+      --fundo: #f3f6fa;
+      --texto: #1e293b;
+      --secundario: #64748b;
+      --borda: #e2e8f0;
+      --verde: #15803d;
+      --laranja: #c2410c;
+      --roxo: #7c3aed;
+      --vermelho: #b91c1c;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--texto);
+      background: var(--fundo);
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .6; }
+    [hidden] { display: none !important; }
+
+    button:focus-visible, input:focus-visible,
+    select:focus-visible, textarea:focus-visible {
+      outline: 3px solid #93c5fd;
+      outline-offset: 2px;
+    }
+
+    .layout { display: flex; min-height: 100vh; }
+
+    .menu-lateral {
+      width: 250px;
+      flex-shrink: 0;
+      padding: 28px 18px;
+      background: white;
+      border-right: 1px solid var(--borda);
+    }
+
+    .marca {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 38px;
+      padding: 0 8px;
+    }
+
+    .marca-icone {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: #dbeafe;
+      color: var(--azul);
+      font-size: 23px;
+      font-weight: bold;
+    }
+
+    .marca strong {
+      display: block;
+      color: var(--azul);
+      font-size: 17px;
+    }
+
+    .marca small { color: var(--secundario); font-size: 11px; }
+
+    .menu-titulo {
+      padding: 0 12px;
+      margin-bottom: 12px;
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .navegacao { display: flex; flex-direction: column; gap: 6px; }
+
+    .item-menu {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 13px 14px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--secundario);
+      text-align: left;
+    }
+
+    .item-menu:hover:not(:disabled) { background: #eff6ff; }
+
+    .item-menu.menu-ativo {
+      background: #dbeafe;
+      color: var(--azul-escuro);
+      font-weight: bold;
+    }
+
+    .menu-texto { flex: 1; }
+
+    .etiqueta-breve {
+      padding: 4px 6px;
+      border-radius: 5px;
+      background: #f1f5f9;
+      font-size: 10px;
+    }
+
+    .menu-rodape {
+      margin-top: 40px;
+      padding: 16px 12px;
+      border-top: 1px solid var(--borda);
+      color: #94a3b8;
+      font-size: 12px;
+    }
+
+    .conteudo-principal {
+      flex: 1;
+      min-width: 0;
+      padding: 40px;
+    }
+
+    .container-conteudo { max-width: 1150px; margin: auto; }
+
+    .cabecalho-pagina { margin-bottom: 28px; }
+    .cabecalho-pagina h1 { margin: 0 0 8px; font-size: 28px; }
+    .cabecalho-pagina p { margin: 0; color: var(--secundario); }
+
+    .barra {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .barra h2 { margin: 0; font-size: 19px; }
+
+    .botao {
+      min-height: 42px;
+      padding: 10px 16px;
+      border: 1px solid var(--borda);
+      border-radius: 8px;
+      background: white;
+      color: var(--texto);
+      font-weight: bold;
+    }
+
+    .botao:hover:not(:disabled) { background: #eff6ff; }
+
+    .botao-primario {
+      background: var(--azul);
+      border-color: var(--azul);
+      color: white;
+    }
+
+    .botao-primario:hover:not(:disabled) {
+      background: var(--azul-escuro);
+    }
+
+    .grade-indicadores {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .cartao-indicador {
+      min-height: 150px;
+      padding: 26px;
+      border: 1px solid var(--borda);
+      border-left: 4px solid var(--cor-cartao);
+      border-radius: 14px;
+      background: white;
+      box-shadow: 0 4px 16px rgba(15,23,42,.05);
+    }
+
+    .cartao-cabecalho {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--secundario);
+    }
+
+    .cartao-cabecalho h3 { margin: 0; font-size: 14px; font-weight: normal; }
+    .cartao-icone { color: var(--cor-cartao); font-size: 22px; }
+    .cartao-valor {
+      margin: 18px 0 0;
+      color: var(--cor-cartao);
+      font-size: 34px;
+      font-weight: bold;
+    }
+
+    .cartao-total { --cor-cartao: #2563eb; }
+    .cartao-concluidas { --cor-cartao: #15803d; }
+    .cartao-abertas { --cor-cartao: #c2410c; }
+    .cartao-taxa { --cor-cartao: #7c3aed; }
+
+    .painel {
+      padding: 26px;
+      border: 1px solid var(--borda);
+      border-radius: 14px;
+      background: white;
+      box-shadow: 0 4px 16px rgba(15,23,42,.04);
+    }
+
+    .painel + .painel { margin-top: 24px; }
+
+    .grade-campos, .grade-filtros {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 16px;
+    }
+
+    .grade-filtros {
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      margin-bottom: 18px;
+    }
+
+    .campo { min-width: 0; margin-bottom: 18px; }
+    .campo label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .campo input, .campo select, .campo textarea {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      background: white;
+      color: var(--texto);
+    }
+
+    .campo textarea { resize: vertical; min-height: 110px; }
+    .campo.sem-margem { margin-bottom: 0; }
+
+    .mensagem { min-height: 20px; margin: 12px 0; color: var(--secundario); }
+    .mensagem.sucesso { color: var(--verde); }
+    .mensagem.erro { color: var(--vermelho); }
+
+    .aviso-erro {
+      padding: 14px;
+      margin: 12px 0;
+      border: 1px solid #fecaca;
+      border-radius: 9px;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .abas-solicitacoes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .aba-botao {
+      padding: 10px 16px;
+      border: 1px solid var(--borda);
+      border-radius: 8px;
+      background: white;
+      color: var(--secundario);
+      font-weight: bold;
+    }
+
+    .aba-botao.ativo {
+      background: #dbeafe;
+      border-color: #bfdbfe;
+      color: var(--azul-escuro);
+    }
+
+    .tabela-rolagem { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td {
+      padding: 13px 10px;
+      border-bottom: 1px solid var(--borda);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--secundario);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    td { font-size: 13px; }
+    td .botao { min-height: 34px; padding: 6px 10px; }
+
+    .etiqueta {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .etiqueta.verde { background: #dcfce7; color: #166534; }
+    .etiqueta.laranja { background: #ffedd5; color: #9a3412; }
+    .etiqueta.vermelha { background: #fee2e2; color: #991b1b; }
+    .etiqueta.azul { background: #dbeafe; color: #1d4ed8; }
+    .etiqueta.roxa { background: #f3e8ff; color: #6d28d9; }
+
+    .detalhes-grade {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 16px;
+      margin: 18px 0;
+    }
+
+    .detalhe-campo {
+      padding: 12px;
+      border-radius: 8px;
+      background: #f8fafc;
+      overflow-wrap: anywhere;
+    }
+
+    .detalhe-campo small {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--secundario);
+    }
+
+    .detalhe-campo strong { font-weight: 600; }
+    .detalhe-largo { grid-column: 1 / -1; }
+    .acoes-detalhes { display: flex; gap: 10px; flex-wrap: wrap; }
+    .texto-auxiliar { color: var(--secundario); font-size: 12px; }
+
+    @media (max-width: 950px) {
+      .conteudo-principal { padding: 28px; }
+      .menu-lateral { width: 220px; }
+      .grade-filtros { grid-template-columns: repeat(2,1fr); }
+    }
+
+    @media (max-width: 700px) {
+      .layout { flex-direction: column; }
+      .menu-lateral {
+        width: 100%;
+        padding: 16px;
+        border-right: 0;
+        border-bottom: 1px solid var(--borda);
+      }
+
+      .marca { margin-bottom: 18px; }
+      .navegacao { flex-direction: row; flex-wrap: wrap; }
+      .item-menu { flex: 1; justify-content: center; padding: 10px 8px; }
+      .menu-titulo, .menu-rodape { display: none; }
+      .conteudo-principal { padding: 22px 16px; }
+      .grade-indicadores, .grade-campos,
+      .grade-filtros, .detalhes-grade { grid-template-columns: 1fr; }
+      .painel { padding: 18px; }
+      .cabecalho-pagina h1 { font-size: 24px; }
+      .detalhe-largo { grid-column: auto; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout">
+
+    <aside class="menu-lateral">
+      <div class="marca">
+        <div class="marca-icone">O</div>
+        <div>
+          <strong>Ops Intelligence</strong>
+          <small>Inteligência Operacional</small>
+        </div>
+      </div>
+
+      <div class="menu-titulo">Navegação</div>
+
+      <nav class="navegacao" aria-label="Menu principal">
+        <button type="button" id="menuDashboard" class="item-menu">
+          <span>▦</span><span class="menu-texto">Dashboard</span>
+        </button>
+
+        <button type="button" id="menuSolicitacoes" class="item-menu menu-ativo">
+          <span>☷</span><span class="menu-texto">Solicitações</span>
+        </button>
+
+        <button type="button" class="item-menu" disabled>
+          <span>◫</span><span class="menu-texto">Indicadores</span>
+          <span class="etiqueta-breve">Em breve</span>
+        </button>
+      </nav>
+
+      <div class="menu-rodape">
+        Ops Intelligence<br>Versão 0.3
+      </div>
+    </aside>
+
+    <main class="conteudo-principal">
+      <div class="container-conteudo">
+
+        <!-- DASHBOARD -->
+        <section id="dashboard" hidden>
+          <header class="cabecalho-pagina">
+            <h1>Dashboard Operacional</h1>
+            <p>Acompanhe os principais indicadores da operação.</p>
+          </header>
+
+          <div class="barra">
+            <div>
+              <h2>Visão geral</h2>
+              <div class="texto-auxiliar">Dados consultados no Google Sheets.</div>
+            </div>
+
+            <button type="button" id="btnAtualizar" class="botao">
+              <span id="textoBotaoAtualizar">↻ Atualizar dados</span>
+            </button>
+          </div>
+
+          <p id="statusDashboard" class="mensagem" role="status"></p>
+
+          <div id="avisoErroDashboard" class="aviso-erro" role="alert" hidden>
+            Não foi possível atualizar os indicadores. Tente novamente.
+          </div>
+
+          <div class="grade-indicadores">
+            <article class="cartao-indicador cartao-total">
+              <div class="cartao-cabecalho">
+                <h3>Total de solicitações</h3><span class="cartao-icone">☷</span>
+              </div>
+              <p id="indicadorTotal" class="cartao-valor">—</p>
+            </article>
+
+            <article class="cartao-indicador cartao-concluidas">
+              <div class="cartao-cabecalho">
+                <h3>Solicitações concluídas</h3><span class="cartao-icone">✓</span>
+              </div>
+              <p id="indicadorConcluidas" class="cartao-valor">—</p>
+            </article>
+
+            <article class="cartao-indicador cartao-abertas">
+              <div class="cartao-cabecalho">
+                <h3>Solicitações em aberto</h3><span class="cartao-icone">◷</span>
+              </div>
+              <p id="indicadorEmAberto" class="cartao-valor">—</p>
+            </article>
+
+            <article class="cartao-indicador cartao-taxa">
+              <div class="cartao-cabecalho">
+                <h3>Taxa de conclusão</h3><span class="cartao-icone">%</span>
+              </div>
+              <p id="indicadorTaxa" class="cartao-valor">—</p>
+            </article>
+          </div>
+        </section>
+
+        <!-- SOLICITAÇÕES -->
+        <section id="paginaSolicitacoes">
+          <header class="cabecalho-pagina">
+            <h1>Gestão de Solicitações</h1>
+            <p>Cadastre, consulte e acompanhe as demandas da operação.</p>
+          </header>
+
+          <div class="abas-solicitacoes">
+            <button type="button" id="abaLista" class="aba-botao ativo">
+              Consultar solicitações
+            </button>
+            <button type="button" id="abaCadastro" class="aba-botao">
+              + Nova solicitação
+            </button>
+          </div>
+
+          <!-- LISTAGEM -->
+          <section id="secaoLista">
+            <div class="painel">
+              <div class="barra">
+                <h2>Solicitações cadastradas</h2>
+                <button type="button" id="btnRecarregarLista" class="botao">
+                  ↻ Atualizar lista
+                </button>
+              </div>
+
+              <div class="grade-filtros">
+                <div class="campo sem-margem">
+                  <label for="filtroPesquisa">Pesquisar</label>
+                  <input id="filtroPesquisa" type="search"
+                    placeholder="ID ou título">
+                </div>
+
+                <div class="campo sem-margem">
+                  <label for="filtroStatus">Status</label>
+                  <select id="filtroStatus">
+                    <option value="">Todos</option>
+                    <option>Em aberto</option>
+                    <option>Em análise</option>
+                    <option>Concluída</option>
+                    <option>Cancelada</option>
+                  </select>
+                </div>
+
+                <div class="campo sem-margem">
+                  <label for="filtroPrioridade">Prioridade</label>
+                  <select id="filtroPrioridade">
+                    <option value="">Todas</option>
+                    <option>Baixa</option>
+                    <option>Média</option>
+                    <option>Alta</option>
+                    <option>Crítica</option>
+                  </select>
+                </div>
+
+                <div class="campo sem-margem">
+                  <label for="filtroEquipe">Equipe</label>
+                  <select id="filtroEquipe">
+                    <option value="">Todas</option>
+                    <option>Tecnologia</option>
+                    <option>Financeiro</option>
+                    <option>Recursos Humanos</option>
+                    <option>Operações</option>
+                  </select>
+                </div>
+              </div>
+
+              <p id="statusLista" class="mensagem" role="status"></p>
+
+              <div class="tabela-rolagem">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Título</th>
+                      <th>Equipe</th>
+                      <th>Prioridade</th>
+                      <th>Status</th>
+                      <th>SLA</th>
+                      <th>Ação</th>
+                    </tr>
+                  </thead>
+                  <tbody id="corpoTabela">
+                    <tr><td colspan="7">Carregando...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- CADASTRO -->
+          <section id="secaoCadastro" hidden>
+            <div class="painel">
+              <div class="barra"><h2>Nova solicitação</h2></div>
+
+              <form id="formSolicitacao">
+                <div class="campo">
+                  <label for="titulo">Título da solicitação</label>
+                  <input id="titulo" type="text" required>
+                </div>
+
+                <div class="grade-campos">
+                  <div class="campo">
+                    <label for="categoria">Categoria</label>
+                    <select id="categoria" required>
+                      <option value="">Selecione</option>
+                      <option>Acesso</option>
+                      <option>Equipamentos</option>
+                      <option>Pagamento</option>
+                      <option>Documentos</option>
+                      <option>Outros</option>
+                    </select>
+                  </div>
+
+                  <div class="campo">
+                    <label for="equipe">Equipe</label>
+                    <select id="equipe" required>
+                      <option value="">Selecione</option>
+                      <option>Tecnologia</option>
+                      <option>Financeiro</option>
+                      <option>Recursos Humanos</option>
+                      <option>Operações</option>
+                    </select>
+                  </div>
+
+                  <div class="campo">
+                    <label for="responsavel">Responsável</label>
+                    <input id="responsavel" type="text">
+                  </div>
+
+                  <div class="campo">
+                    <label for="prioridade">Prioridade</label>
+                    <select id="prioridade" required>
+                      <option value="">Selecione</option>
+                      <option>Baixa</option>
+                      <option>Média</option>
+                      <option>Alta</option>
+                      <option>Crítica</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="campo">
+                  <label for="descricao">Descrição</label>
+                  <textarea id="descricao" required></textarea>
+                </div>
+
+                <button id="btnCadastrar" type="submit"
+                  class="botao botao-primario">
+                  Cadastrar solicitação
+                </button>
+              </form>
+
+              <p id="mensagemCadastro" class="mensagem" role="status"></p>
+            </div>
+          </section>
+
+          <!-- DETALHES -->
+          <section id="secaoDetalhes" hidden>
+            <div class="painel">
+              <div class="barra">
+                <h2 id="tituloDetalhes">Detalhes da solicitação</h2>
+                <button type="button" id="btnVoltarLista" class="botao">
+                  ← Voltar à lista
+                </button>
+              </div>
+
+              <p id="statusDetalhes" class="mensagem" role="status"></p>
+
+              <div id="conteudoDetalhes" hidden>
+                <div id="gradeDetalhes" class="detalhes-grade"></div>
+
+                <div class="campo">
+                  <label for="novoStatus">Alterar status</label>
+                  <select id="novoStatus">
+                    <option>Em aberto</option>
+                    <option>Em análise</option>
+                    <option>Concluída</option>
+                    <option>Cancelada</option>
+                  </select>
+                </div>
+
+                <div class="acoes-detalhes">
+                  <button type="button" id="btnSalvarStatus"
+                    class="botao botao-primario">
+                    Salvar status
+                  </button>
+                </div>
+
+                <p class="texto-auxiliar">
+                  Reabrir uma solicitação não reinicia seu prazo de SLA.
+                </p>
+              </div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ========================================
+    // 1. ESTADO E FUNÇÕES AUXILIARES
+    // ========================================
+
+    const $ = id => document.getElementById(id);
+
+    const CHAVE_PAGINA = "opsIntelligenceUltimaPagina";
+
+    let paginaAtual = "";
+    let abaAtual = "lista";
+    let solicitacoes = [];
+    let idSelecionado = null;
+    let carregandoIndicadores = false;
+    let carregandoLista = false;
+    let salvandoStatus = false;
+    let sequenciaLista = 0;
+    let sequenciaDetalhes = 0;
+
+    function mensagem(id, texto, tipo = "") {
+      const elemento = $(id);
+      elemento.textContent = texto;
+      elemento.className = "mensagem" + (tipo ? " " + tipo : "");
+    }
+
+    function textoErro(erro) {
+      return erro && erro.message
+        ? erro.message
+        : "Ocorreu um erro inesperado.";
+    }
+
+    function criarElemento(tag, texto, classe) {
+      const elemento = document.createElement(tag);
+      if (texto !== undefined) elemento.textContent = texto;
+      if (classe) elemento.className = classe;
+      return elemento;
+    }
+
+    function classeEtiqueta(valor) {
+      const cores = {
+        "Em aberto": "laranja",
+        "Em análise": "azul",
+        "Concluída": "verde",
+        "Cancelada": "",
+        "Crítica": "vermelha",
+        "Alta": "laranja",
+        "Média": "azul",
+        "Baixa": "verde",
+        "Atrasada": "vermelha",
+        "Próxima do vencimento": "laranja",
+        "Dentro do prazo": "verde",
+        "Concluída no prazo": "verde",
+        "Concluída com atraso": "vermelha"
+      };
+
+      return "etiqueta " + (cores[valor] || "");
+    }
+
+    function salvarPagina(pagina) {
+      try {
+        localStorage.setItem(CHAVE_PAGINA, pagina);
+      } catch (erro) {
+        console.warn("Não foi possível salvar a página.", erro);
+      }
+    }
+
+    function recuperarPagina() {
+      try {
+        const pagina = localStorage.getItem(CHAVE_PAGINA);
+        if (["dashboard", "solicitacoes"].includes(pagina)) {
+          return pagina;
+        }
+      } catch (erro) {
+        console.warn("Não foi possível recuperar a página.", erro);
+      }
+
+      return "solicitacoes";
+    }
+
+    // ========================================
+    // 2. NAVEGAÇÃO
+    // ========================================
+
+    function abrirPagina(pagina) {
+      paginaAtual = pagina;
+
+      const dashboard = pagina === "dashboard";
+
+      $("dashboard").hidden = !dashboard;
+      $("paginaSolicitacoes").hidden = dashboard;
+
+      $("menuDashboard").classList.toggle("menu-ativo", dashboard);
+      $("menuSolicitacoes").classList.toggle("menu-ativo", !dashboard);
+
+      $("menuDashboard").setAttribute(
+        "aria-current", dashboard ? "page" : "false"
+      );
+
+      $("menuSolicitacoes").setAttribute(
+        "aria-current", dashboard ? "false" : "page"
+      );
+
+      salvarPagina(pagina);
+
+      if (dashboard) {
+        carregarIndicadores();
+      } else if (abaAtual === "lista") {
+        carregarLista();
+      }
+    }
+
+    function abrirAba(aba) {
+      abaAtual = aba;
+
+      $("secaoLista").hidden = aba !== "lista";
+      $("secaoCadastro").hidden = aba !== "cadastro";
+      $("secaoDetalhes").hidden = aba !== "detalhes";
+
+      $("abaLista").classList.toggle("ativo", aba === "lista");
+      $("abaCadastro").classList.toggle("ativo", aba === "cadastro");
+
+      if (aba === "lista") {
+        carregarLista();
+      }
+    }
+
+    $("menuDashboard").addEventListener("click", () =>
+      abrirPagina("dashboard")
+    );
+
+    $("menuSolicitacoes").addEventListener("click", () =>
+      abrirPagina("solicitacoes")
+    );
+
+    $("abaLista").addEventListener("click", () => abrirAba("lista"));
+    $("abaCadastro").addEventListener("click", () => abrirAba("cadastro"));
+    $("btnVoltarLista").addEventListener("click", () => abrirAba("lista"));
+
+    // ========================================
+    // 3. DASHBOARD
+    // ========================================
+
+    function carregarIndicadores() {
+      if (carregandoIndicadores) return;
+
+      carregandoIndicadores = true;
+      $("btnAtualizar").disabled = true;
+      $("textoBotaoAtualizar").textContent = "Atualizando...";
+      $("avisoErroDashboard").hidden = true;
+      mensagem("statusDashboard", "Consultando os dados da operação...");
+
+      google.script.run
+        .withSuccessHandler(function(dados) {
+          carregandoIndicadores = false;
+          $("btnAtualizar").disabled = false;
+          $("textoBotaoAtualizar").textContent = "↻ Atualizar dados";
+
+          if (
+            !dados ||
+            !["total", "concluidas", "emAberto", "taxaConclusao"]
+              .every(chave => typeof dados[chave] === "number")
+          ) {
+            $("avisoErroDashboard").hidden = false;
+            mensagem("statusDashboard", "Dados recebidos inválidos.", "erro");
+            return;
+          }
+
+          $("indicadorTotal").textContent = dados.total;
+          $("indicadorConcluidas").textContent = dados.concluidas;
+          $("indicadorEmAberto").textContent = dados.emAberto;
+          $("indicadorTaxa").textContent = dados.taxaConclusao + "%";
+
+          mensagem(
+            "statusDashboard",
+            "Indicadores atualizados com sucesso.",
+            "sucesso"
+          );
+        })
+        .withFailureHandler(function(erro) {
+          carregandoIndicadores = false;
+          $("btnAtualizar").disabled = false;
+          $("textoBotaoAtualizar").textContent = "↻ Atualizar dados";
+          $("avisoErroDashboard").hidden = false;
+          mensagem("statusDashboard", textoErro(erro), "erro");
+        })
+        .obterIndicadores();
+    }
+
+    $("btnAtualizar").addEventListener("click", carregarIndicadores);
+
+    // ========================================
+    // 4. LISTAGEM, PESQUISA E FILTROS
+    // ========================================
+
+    function carregarLista() {
+      if (carregandoLista) return;
+
+      carregandoLista = true;
+      $("btnRecarregarLista").disabled = true;
+      mensagem("statusLista", "Carregando solicitações...");
+
+      const consulta = ++sequenciaLista;
+
+      google.script.run
+        .withSuccessHandler(function(dados) {
+          if (consulta !== sequenciaLista) return;
+
+          carregandoLista = false;
+          $("btnRecarregarLista").disabled = false;
+
+          if (!Array.isArray(dados)) {
+            mensagem("statusLista", "Resposta inválida do servidor.", "erro");
+            return;
+          }
+
+          solicitacoes = dados;
+          renderizarTabela();
+        })
+        .withFailureHandler(function(erro) {
+          if (consulta !== sequenciaLista) return;
+
+          carregandoLista = false;
+          $("btnRecarregarLista").disabled = false;
+          mensagem("statusLista", textoErro(erro), "erro");
+
+          // Evita exibir dados antigos como se fossem atuais.
+          solicitacoes = [];
+          renderizarTabela(true);
+        })
+        .listarSolicitacoes();
+    }
+
+    function renderizarTabela(erroConsulta = false) {
+      const corpo = $("corpoTabela");
+      corpo.replaceChildren();
+
+      if (erroConsulta) {
+        const linha = criarElemento("tr");
+        const celula = criarElemento(
+          "td",
+          "Não foi possível consultar os registros. Tente atualizar a lista."
+        );
+        celula.colSpan = 7;
+        linha.appendChild(celula);
+        corpo.appendChild(linha);
+        return;
+      }
+
+      const pesquisa = $("filtroPesquisa").value
+        .trim()
+        .toLocaleLowerCase("pt-BR");
+
+      const status = $("filtroStatus").value;
+      const prioridade = $("filtroPrioridade").value;
+      const equipe = $("filtroEquipe").value;
+
+      const filtradas = solicitacoes.filter(item => {
+        const correspondePesquisa =
+          item.id.toLocaleLowerCase("pt-BR").includes(pesquisa) ||
+          item.titulo.toLocaleLowerCase("pt-BR").includes(pesquisa);
+
+        return correspondePesquisa &&
+          (!status || item.status === status) &&
+          (!prioridade || item.prioridade === prioridade) &&
+          (!equipe || item.equipe === equipe);
+      });
+
+      mensagem(
+        "statusLista",
+        filtradas.length + " solicitação(ões) encontrada(s).",
+        "sucesso"
+      );
+
+      if (!filtradas.length) {
+        const linha = criarElemento("tr");
+        const celula = criarElemento(
+          "td",
+          "Nenhuma solicitação encontrada."
+        );
+        celula.colSpan = 7;
+        linha.appendChild(celula);
+        corpo.appendChild(linha);
+        return;
+      }
+
+      filtradas.forEach(item => {
+        const linha = criarElemento("tr");
+
+        ["id", "titulo", "equipe"].forEach(chave => {
+          linha.appendChild(criarElemento("td", item[chave]));
+        });
+
+        const prioridadeTd = criarElemento("td");
+        prioridadeTd.appendChild(
+          criarElemento(
+            "span",
+            item.prioridade,
+            classeEtiqueta(item.prioridade)
+          )
+        );
+        linha.appendChild(prioridadeTd);
+
+        const statusTd = criarElemento("td");
+        statusTd.appendChild(
+          criarElemento("span", item.status, classeEtiqueta(item.status))
+        );
+        linha.appendChild(statusTd);
+
+        const slaTd = criarElemento("td");
+        slaTd.appendChild(
+          criarElemento(
+            "span",
+            item.situacaoSla,
+            classeEtiqueta(item.situacaoSla)
+          )
+        );
+        linha.appendChild(slaTd);
+
+        const acaoTd = criarElemento("td");
+        const botao = criarElemento("button", "Ver detalhes", "botao");
+        botao.type = "button";
+        botao.addEventListener("click", () => abrirDetalhes(item.id));
+        acaoTd.appendChild(botao);
+        linha.appendChild(acaoTd);
+
+        corpo.appendChild(linha);
+      });
+    }
+
+    ["filtroPesquisa", "filtroStatus", "filtroPrioridade", "filtroEquipe"]
+      .forEach(id => {
+        $(id).addEventListener(
+          id === "filtroPesquisa" ? "input" : "change",
+          () => renderizarTabela()
+        );
+      });
+
+    $("btnRecarregarLista").addEventListener("click", carregarLista);
+
+    // ========================================
+    // 5. DETALHAMENTO
+    // ========================================
+
+    function adicionarDetalhe(rotulo, valor, largo = false) {
+      const caixa = criarElemento(
+        "div",
+        undefined,
+        "detalhe-campo" + (largo ? " detalhe-largo" : "")
+      );
+
+      caixa.appendChild(criarElemento("small", rotulo));
+      caixa.appendChild(criarElemento("strong", valor || "—"));
+      $("gradeDetalhes").appendChild(caixa);
+    }
+
+    function exibirDetalhes(item) {
+      $("tituloDetalhes").textContent = "Solicitação " + item.id;
+      $("gradeDetalhes").replaceChildren();
+
+      adicionarDetalhe("Título", item.titulo, true);
+      adicionarDetalhe("Categoria", item.categoria);
+      adicionarDetalhe("Equipe", item.equipe);
+      adicionarDetalhe("Responsável", item.responsavel);
+      adicionarDetalhe("Prioridade", item.prioridade);
+      adicionarDetalhe("Status atual", item.status);
+      adicionarDetalhe("Situação do SLA", item.situacaoSla);
+      adicionarDetalhe("Data de abertura", item.dataAbertura);
+      adicionarDetalhe("Prazo de SLA", item.prazoSla);
+      adicionarDetalhe("Data de conclusão", item.dataConclusao);
+      adicionarDetalhe("Descrição", item.descricao, true);
+
+      $("novoStatus").value = item.status;
+      $("conteudoDetalhes").hidden = false;
+      mensagem("statusDetalhes", "");
+    }
+
+    function abrirDetalhes(id) {
+      idSelecionado = id;
+      abrirAba("detalhes");
+      $("conteudoDetalhes").hidden = true;
+      mensagem("statusDetalhes", "Consultando solicitação...");
+
+      const consulta = ++sequenciaDetalhes;
+
+      google.script.run
+        .withSuccessHandler(function(item) {
+          if (consulta !== sequenciaDetalhes || id !== idSelecionado) {
+            return;
+          }
+
+          if (!item || item.id !== id) {
+            mensagem("statusDetalhes", "Dados inválidos.", "erro");
+            return;
+          }
+
+          exibirDetalhes(item);
+        })
+        .withFailureHandler(function(erro) {
+          if (consulta !== sequenciaDetalhes) return;
+          mensagem("statusDetalhes", textoErro(erro), "erro");
+        })
+        .obterSolicitacaoPorId(id);
+    }
+
+    // ========================================
+    // 6. ALTERAÇÃO DE STATUS E REABERTURA
+    // ========================================
+
+    $("btnSalvarStatus").addEventListener("click", function() {
+      if (!idSelecionado || salvandoStatus) return;
+
+      const id = idSelecionado;
+      const novoStatus = $("novoStatus").value;
+
+      salvandoStatus = true;
+      $("btnSalvarStatus").disabled = true;
+      mensagem("statusDetalhes", "Salvando alteração...");
+
+      google.script.run
+        .withSuccessHandler(function(item) {
+          salvandoStatus = false;
+          $("btnSalvarStatus").disabled = false;
+
+          if (idSelecionado !== id) return;
+
+          exibirDetalhes(item);
+          mensagem(
+            "statusDetalhes",
+            "Status atualizado com sucesso!",
+            "sucesso"
+          );
+        })
+        .withFailureHandler(function(erro) {
+          salvandoStatus = false;
+          $("btnSalvarStatus").disabled = false;
+
+          if (idSelecionado !== id) return;
+
+          mensagem("statusDetalhes", textoErro(erro), "erro");
+        })
+        .atualizarStatusSolicitacao(id, novoStatus);
+    });
+
+    // ========================================
+    // 7. CADASTRO
+    // ========================================
+
+    $("formSolicitacao").addEventListener("submit", function(evento) {
+      evento.preventDefault();
+
+      const dados = {
+        titulo: $("titulo").value,
+        categoria: $("categoria").value,
+        equipe: $("equipe").value,
+        responsavel: $("responsavel").value,
+        prioridade: $("prioridade").value,
+        descricao: $("descricao").value
+      };
+
+      $("btnCadastrar").disabled = true;
+      mensagem("mensagemCadastro", "Cadastrando solicitação...");
+
+      google.script.run
+        .withSuccessHandler(function(id) {
+          $("btnCadastrar").disabled = false;
+          $("formSolicitacao").reset();
+
+          mensagem(
+            "mensagemCadastro",
+            "Solicitação cadastrada com sucesso! ID: " + id,
+            "sucesso"
+          );
+        })
+        .withFailureHandler(function(erro) {
+          $("btnCadastrar").disabled = false;
+          mensagem(
+            "mensagemCadastro",
+            "Erro ao cadastrar: " + textoErro(erro),
+            "erro"
+          );
+        })
+        .cadastrarSolicitacao(dados);
+    });
+
+    // ========================================
+    // 8. INICIALIZAÇÃO
+    // ========================================
+
+    abrirPagina(recuperarPagina());
+  </script>
+</body>
+</html>
