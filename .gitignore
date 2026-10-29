@@ -1,0 +1,19 @@
+# Configurações locais
+.env
+.env.*
+!.env.example
+
+# Credenciais
+credentials.json
+service-account*.json
+*.pem
+*.key
+
+# Arquivos temporários
+*.log
+*.tmp
+Thumbs.db
+
+# Configurações de editores
+.vscode/
+.idea/
